@@ -1,23 +1,51 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import { SideBar } from './components/SideBar';
+import { Header } from './components/Header';
+import { TaskForm } from './components/TaskForm';
 
 function App() {
+  const [formVisible, setFormVisible] = useState(false);
+  const [tasks, setTasks] = useState([])
+
+  const toggleFormVisibility = () => {
+    setFormVisible(prev => !prev);
+  };
+
+  const saveTaskHandler = async (task) => {
+    try {
+      const response = await fetch('http://localhost:3001/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(task)
+      });
+      if (!response.ok) {
+        throw new Error('Failed to save task');
+      }
+      const savedTask = await response.json();
+      setTasks(prevTasks => [...prevTasks, savedTask]);
+      setFormVisible(false);
+    } 
+    catch (error) {
+      console.error('Error saving task:', error);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="flex flex-col h-screen">
+      <Header />
+      <div className="flex flex-grow">
+        <SideBar toggleFormVisibility={toggleFormVisibility} tasks={tasks}/>
+        <main className="flex-grow p-8 bg-gray-100 overflow-y-auto pt-40">
+          {formVisible && (
+            <div className="max-w-3xl mx-auto">
+              <TaskForm onSaveTask={saveTaskHandler} onCancel={() => setFormVisible(false)} />
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
