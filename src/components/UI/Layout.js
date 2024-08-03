@@ -29,7 +29,8 @@ export const Layout = ({ children }) => {
             const savedTask = await response.json();
             setTasks(prevTasks => [...prevTasks, savedTask]);
             setFormVisible(false);
-        } catch (error) {
+        } 
+        catch (error) {
             console.error('Error saving task:', error);
         }
     };
@@ -48,7 +49,7 @@ export const Layout = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        // Hide the form when the location changes
+        //Hide the form when the location changes
         setFormVisible(false);
     }, [location])
 
