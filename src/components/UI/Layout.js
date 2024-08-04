@@ -54,7 +54,7 @@ export const Layout = ({ children }) => {
     }, [location])
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="flex flex-col h-screen bg-gray-400">
         <Header />
         <div className="flex flex-grow overflow-hidden">
             <SideBar toggleFormVisibility={toggleFormVisibility} tasks={tasks}/>
