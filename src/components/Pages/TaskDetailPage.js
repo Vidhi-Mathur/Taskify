@@ -6,6 +6,7 @@ import { CalendarDays, ClipboardList } from 'lucide-react';
 export const TaskDetailPage = () => {
     const { taskId } = useParams();
     const [taskDetail, setTaskDetail] = useState(null);
+    const [isCompleted, setIsCompleted] = useState(false);
 
     useEffect(() => {
         const fetchTask = async () => {
@@ -16,13 +17,36 @@ export const TaskDetailPage = () => {
                 }
                 const result = await response.json();
                 setTaskDetail(result);
-            }
+                setIsCompleted(result.completed);
+            } 
             catch (error) {
                 console.error('Error fetching task:', error);
             }
         };
         fetchTask();
     }, [taskId]);
+
+    const toggleCompletion = async () => {
+        try {
+            const newCompletionStatus = !isCompleted;
+            const response = await fetch(`http://localhost:3001/tasks/${taskId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ completed: newCompletionStatus })
+            });
+            if (!response.ok) {
+                throw new Error('Failed to update task completion status');
+            }
+            const updatedTask = await response.json();
+            setTaskDetail(updatedTask);
+            setIsCompleted(newCompletionStatus); 
+        } 
+        catch (error) {
+            console.error('Error updating task completion status:', error);
+        }
+    };
 
     if (!taskDetail) {
         return <div className="flex justify-center items-center h-full text-gray-300">
@@ -48,6 +72,9 @@ export const TaskDetailPage = () => {
                     </div>
                     <p className="text-gray-400 ml-8">{new Date(taskDetail.dueDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
+                <button onClick={toggleCompletion} className='px-4 py-2 text-sm md:text-base rounded-md text-gray-100 bg-blue-700 hover:bg-blue-600 hover:text-white'>
+                    Mark as {isCompleted ? "to be Done" : "Complete"}
+                </button>
             </div>
         </div>
     );
