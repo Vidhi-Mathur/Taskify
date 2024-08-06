@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-export const TaskForm = ({ onSaveTask, onCancel }) => {
+export const TaskForm = ({ onSaveTask, onCancel, initialData = null }) => {
     const [details, setDetails] = useState({
         title: '',
         description: '',
@@ -18,6 +18,17 @@ export const TaskForm = ({ onSaveTask, onCancel }) => {
         completed: false
     })
   };
+
+  useEffect(() => {
+    if (initialData) {
+        setDetails({
+            title: initialData.title,
+            description: initialData.description,
+            dueDate: initialData.dueDate.split('T')[0], 
+            completed: initialData.completed
+        });
+    }
+}, [initialData]);
 
   const changeHandler = (e) => {
     const { name, value } = e.target
