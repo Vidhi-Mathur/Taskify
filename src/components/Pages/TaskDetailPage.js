@@ -1,57 +1,98 @@
-import React from 'react';
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { CalendarDays, ClipboardList } from 'lucide-react';
+import { useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { CalendarDays, ClipboardList } from 'lucide-react'
+import { TaskForm } from '../UI/TaskForm'
 
 export const TaskDetailPage = () => {
-    const { taskId } = useParams();
-    const [taskDetail, setTaskDetail] = useState(null);
-    const [isCompleted, setIsCompleted] = useState(false);
+    const { taskId } = useParams()
+    const [taskDetail, setTaskDetail] = useState(null)
+    const [isCompleted, setIsCompleted] = useState(false)
+    const [isEditing, setIsEditing] = useState(false)
 
     useEffect(() => {
         const fetchTask = async () => {
-            try {
-                const response = await fetch(`http://localhost:3001/tasks/${taskId}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch task');
+            try{
+                const response = await fetch(`http://localhost:3001/tasks/${taskId}`)
+                if(!response.ok){
+                    throw new Error('Failed to fetch task')
                 }
-                const result = await response.json();
-                setTaskDetail(result);
-                setIsCompleted(result.completed);
+                const result = await response.json()
+                setTaskDetail(result)
+                setIsCompleted(result.completed)
             } 
-            catch (error) {
-                console.error('Error fetching task:', error);
+            catch(error) {
+                console.error('Error fetching task:', error)
             }
-        };
-        fetchTask();
-    }, [taskId]);
+        }
+        fetchTask()
+    }, [taskId])
 
     const toggleCompletion = async () => {
-        try {
-            const newCompletionStatus = !isCompleted;
+        try{
+            const newCompletionStatus = !isCompleted
             const response = await fetch(`http://localhost:3001/tasks/${taskId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ completed: newCompletionStatus })
-            });
-            if (!response.ok) {
-                throw new Error('Failed to update task completion status');
+            })
+            if(!response.ok){
+                throw new Error('Failed to update task completion status')
             }
-            const updatedTask = await response.json();
-            setTaskDetail(updatedTask);
-            setIsCompleted(newCompletionStatus); 
+            const updatedTask = await response.json()
+            setTaskDetail(updatedTask)
+            setIsCompleted(newCompletionStatus) 
         } 
-        catch (error) {
-            console.error('Error updating task completion status:', error);
+        catch(error) {
+            console.error('Error updating task completion status:', error)
         }
-    };
+    }
 
-    if (!taskDetail) {
-        return <div className="flex justify-center items-center h-full text-gray-300">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-        </div>;
+    const editHandler = () => {
+        setIsEditing(true)
+    }
+
+    const cancelHandler = () => {
+        setIsEditing(false)
+    }
+
+    const saveTaskHandler = async (updatedTask) => {
+        try{
+            const response = await fetch(`http://localhost:3001/tasks/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedTask)
+            });
+            if(!response.ok){
+                throw new Error('Failed to update task');
+            }
+            const result = await response.json();
+            setTaskDetail(result);
+            setIsCompleted(result.completed);
+            setIsEditing(false);
+        } 
+        catch(error){
+            console.error('Error updating task:', error);
+        }
+    }
+
+    if(!taskDetail){
+        return (
+            <div className="flex justify-center items-center h-full text-gray-300">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        )
+    }
+
+    if(isEditing){
+        return (
+            <div className="max-w-3xl mx-auto mt-28">
+                <TaskForm onSaveTask={saveTaskHandler} onCancel={cancelHandler} initialData={taskDetail}/>
+            </div>
+        )
     }
 
     return (
@@ -72,10 +113,13 @@ export const TaskDetailPage = () => {
                     </div>
                     <p className="text-gray-400 ml-8">{new Date(taskDetail.dueDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
-                <button onClick={toggleCompletion} className='px-4 py-2 text-sm md:text-base rounded-md text-gray-100 bg-blue-700 hover:bg-blue-600 hover:text-white'>
+                <button onClick={toggleCompletion} className='px-4 py-2 text-sm md:text-base rounded-md text-gray-100 bg-blue-700 hover:bg-blue-600 hover:text-white mr-3'>
                     Mark as {isCompleted ? "to be Done" : "Complete"}
+                </button>
+                <button onClick={editHandler} className='px-4 py-2 text-sm md:text-base rounded-md text-gray-100 bg-blue-700 hover:bg-blue-600 hover:text-white'>
+                    Update
                 </button>
             </div>
         </div>
-    );
-};
+    )
+}
