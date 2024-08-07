@@ -4,12 +4,15 @@ import { Tooltip } from '@mui/material'
 import ViewSidebarIcon from '@mui/icons-material/ViewSidebar'
 import SearchSharpIcon from '@mui/icons-material/SearchTwoTone'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 
 export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
     const [isVisible, setIsVisible] = useState(false)
     const [isSearchActive, setIsSearchActive] = useState(false)
     const [query, setQuery] = useState('')
     const [filteredTasks, setFilteredTasks] = useState(tasks)
+    const [expandedTasks, setExpandedTasks] = useState({})
 
     //To handle sidebar visiblity, which is initially hidden
     const toggleSideBarVisibility = () => {
@@ -18,12 +21,19 @@ export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
 
     //To handle searching tasks
     const toggleSearchBarVisibility = () => {
+        //Reset query and filtered tasks when closing search
         if(isSearchActive){
-            //Reset query and filtered tasks when closing search
             setQuery('')
             setFilteredTasks(tasks)
         }
         setIsSearchActive(prevState => !prevState)
+    }
+
+    const toggleTaskExpansion = (taskId) => {
+        setExpandedTasks(prev => ({
+            ...prev,
+            [taskId]: !prev[taskId]
+        }))
     }
 
     useEffect(() => {
@@ -31,15 +41,27 @@ export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
         if(query.trim() === ''){
             setFilteredTasks(tasks)
         } 
-        //Filter based on search results
-        else{
-            setFilteredTasks(tasks.filter(task => task.title.toLowerCase().includes(query.toLowerCase())))
+        else {
+            setFilteredTasks(tasks.filter(task => 
+                task.title.toLowerCase().includes(query.toLowerCase()) || task.description.toLowerCase().includes(query.toLowerCase())
+            ))
         }
     }, [query, tasks])
 
     //Handling change in search query 
     const inputChangeHandler = (e) => {
         setQuery(e.target.value)
+    }
+
+    //To display formatted date
+    const formattedDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        })
     }
 
     return (
@@ -56,7 +78,7 @@ export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
                         <div className="flex w-full max-w-4xl mx-auto border border-gray-300 rounded-md overflow-hidden mr-2">
                             <input type="search" placeholder="Search" className="flex-grow px-4 py-1 text-base outline-none bg-gray-800 text-gray-300" value={query} onChange={inputChangeHandler}/>
                             <button className="px-4 py-1 bg-gray-800 hover:bg-gray-700 transition-colors" onClick={toggleSearchBarVisibility}>
-                            <ArrowBackIcon color='info' />
+                                <ArrowBackIcon color='info' />
                             </button>
                         </div>
                     </>
@@ -73,10 +95,19 @@ export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
                         )}
                         <ul className="space-y-2 font-medium">
                             {filteredTasks.map(task => (
-                                <li key={task.id}>
-                                    <Link to={`/${task.id}`} className="flex items-center p-2 rounded-lg hover:bg-gray-700 group">
-                                        <span className={`ms-3 ${task.completed ? 'text-gray-500 line-through' : 'text-gray-300'}`}>{task.title}</span>
-                                    </Link>
+                                <li key={task.id} className="bg-gray-800 rounded-lg overflow-hidden">
+                                    <div className="flex items-center justify-between p-2 cursor-pointer" onClick={() => toggleTaskExpansion(task.id)}>
+                                        <Link to={`/${task.id}`} className="flex-grow">
+                                            <span className={`ms-3 ${task.completed ? 'text-gray-500 line-through' : 'text-gray-300'}`}>{task.title}</span>
+                                        </Link>
+                                        {expandedTasks[task.id] ? <ExpandLessIcon color='info' /> : <ExpandMoreIcon color='info' />}
+                                    </div>
+                                    {expandedTasks[task.id] && (
+                                        <div className="p-2 bg-gray-700">
+                                            <p className="text-gray-400 text-sm mb-1">{task.description}</p>
+                                            <p className="text-gray-500 text-xs">Last updated: {formattedDate(task.updatedAt || task.createdAt)}</p>
+                                        </div>
+                                    )}
                                 </li>
                             ))}
                         </ul>
