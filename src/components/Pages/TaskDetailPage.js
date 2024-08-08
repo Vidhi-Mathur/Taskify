@@ -84,6 +84,14 @@ export const TaskDetailPage = () => {
         }
     }
 
+    if(!taskDetail){
+        return (
+            <div className="flex justify-center items-center h-full text-gray-300">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        )
+    }
+
     //If in editing mode, render the form along with initial data
     if(isEditing){
         return (
