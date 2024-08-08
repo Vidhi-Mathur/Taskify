@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+//Form to save task details
 export const TaskForm = ({ onSaveTask, onCancel, initialData = null }) => {
     const [details, setDetails] = useState({
         title: '',
@@ -9,13 +10,15 @@ export const TaskForm = ({ onSaveTask, onCancel, initialData = null }) => {
         updatedAt: ''
     })
 
+    //Data already exist
     useEffect(() => {
         if(initialData){
             setDetails({
-                title: '',
-                description: '',
-                dueDate: '', 
-                completed: false
+                title: initialData.title,
+                description: initialData.description,
+                dueDate: initialData.dueDate, 
+                completed: initialData.completed,
+                updatedAt: initialData.updatedAt
             })
         }
     }, [initialData])
@@ -36,16 +39,12 @@ export const TaskForm = ({ onSaveTask, onCancel, initialData = null }) => {
         e.preventDefault();
         const taskData = {
             ...details,
-            updatedAt: new Date().toISOString() 
+            updatedAt: details.updatedAt || new Date().toISOString()
         };
         if(initialData){
             //If we're editing, include the id
             taskData.id = initialData.id;
         } 
-        else{
-            //If we're creating a new task, set the createdAt
-            taskData.createdAt = taskData.updatedAt
-        }
         onSaveTask(taskData)
     }
 
