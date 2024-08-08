@@ -9,6 +9,7 @@ export const TaskDetailPage = () => {
     const [isCompleted, setIsCompleted] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
 
+    //Fetch task based on it
     useEffect(() => {
         const fetchTask = async () => {
             try{
@@ -27,6 +28,7 @@ export const TaskDetailPage = () => {
         fetchTask()
     }, [taskId])
 
+    //To update the completion status of task in the backend
     const toggleCompletion = async () => {
         try{
             const newCompletionStatus = !isCompleted
@@ -49,14 +51,17 @@ export const TaskDetailPage = () => {
         }
     }
 
+    //To enable editing mode
     const editHandler = () => {
         setIsEditing(true)
     }
 
+    //To disable editing mode
     const cancelHandler = () => {
         setIsEditing(false)
     }
 
+    //To modify tasks
     const saveTaskHandler = async (updatedTask) => {
         try{
             const response = await fetch(`http://localhost:3001/tasks/${taskId}`, {
@@ -79,14 +84,7 @@ export const TaskDetailPage = () => {
         }
     }
 
-    if(!taskDetail){
-        return (
-            <div className="flex justify-center items-center h-full text-gray-300">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-            </div>
-        )
-    }
-
+    //If in editing mode, render the form along with initial data
     if(isEditing){
         return (
             <div className="max-w-3xl mx-auto mt-28">

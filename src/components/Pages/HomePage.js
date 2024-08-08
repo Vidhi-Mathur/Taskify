@@ -1,5 +1,6 @@
 import { TypewriterText } from "../UI/TypeWriterText"
 
+//Default Page rendered, containing the intro
 export const HomePage = () => {
   const texts = ["planning your day", "managing projects", "tracking personal goals"]
 
