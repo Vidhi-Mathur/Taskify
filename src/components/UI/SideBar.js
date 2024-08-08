@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Tooltip } from '@mui/material'
 import ViewSidebarIcon from '@mui/icons-material/ViewSidebar'
 import SearchSharpIcon from '@mui/icons-material/SearchTwoTone'
@@ -9,6 +9,8 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 
 //Displays sidebar to give preview of all tasks
 export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
+    const location = useLocation();
+    const navigate = useNavigate();
     const [isVisible, setIsVisible] = useState(false)
     const [isSearchActive, setIsSearchActive] = useState(false)
     const [query, setQuery] = useState('')
@@ -22,10 +24,11 @@ export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
 
     //To handle searching tasks
     const toggleSearchBarVisibility = () => {
-        //Reset query and filtered tasks when closing search
+        //Reset query and filtered tasks when closing search, and navigate
         if(isSearchActive){
             setQuery('')
             setFilteredTasks(tasks)
+            navigate('/')
         }
         setIsSearchActive(prevState => !prevState)
     }
@@ -39,20 +42,22 @@ export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
     }
 
     useEffect(() => {
-        //Nothing entered
-        if(query.trim() === ''){
-            setFilteredTasks(tasks)
-        } 
-        else {
+        //Check query parameter in URL
+        const searchParams = new URLSearchParams(location.search);
+        const queryParam = searchParams.get('query');
+        if(queryParam) {
+            setQuery(queryParam)
             setFilteredTasks(tasks.filter(task => 
-                task.title.toLowerCase().includes(query.toLowerCase()) || task.description.toLowerCase().includes(query.toLowerCase())
+                task.title.toLowerCase().includes(queryParam.toLowerCase()) || task.description.toLowerCase().includes(queryParam.toLowerCase())
             ))
+            setIsSearchActive(true)
         }
-    }, [query, tasks])
+    }, [location.search, tasks])
 
     //Handling change in search query 
     const inputChangeHandler = (e) => {
         setQuery(e.target.value)
+        navigate(`?query=${e.target.value}`)
     }
 
     //To display formatted date
