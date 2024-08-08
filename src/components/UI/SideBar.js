@@ -7,6 +7,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 
+//Displays sidebar to give preview of all tasks
 export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
     const [isVisible, setIsVisible] = useState(false)
     const [isSearchActive, setIsSearchActive] = useState(false)
@@ -29,6 +30,7 @@ export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
         setIsSearchActive(prevState => !prevState)
     }
 
+    //Expand task, based on id
     const toggleTaskExpansion = (taskId) => {
         setExpandedTasks(prev => ({
             ...prev,
@@ -105,7 +107,7 @@ export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
                                     {expandedTasks[task.id] && (
                                         <div className="p-2 bg-gray-700">
                                             <p className="text-gray-400 text-sm mb-1">{task.description}</p>
-                                            <p className="text-gray-500 text-xs">Last updated: {formattedDate(task.updatedAt || task.createdAt)}</p>
+                                            <p className="text-gray-500 text-xs">Last updated: {formattedDate(task.updatedAt)}</p>
                                         </div>
                                     )}
                                 </li>

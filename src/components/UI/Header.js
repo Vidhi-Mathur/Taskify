@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import logo from "../../assets/logo.png";
 
+//Header containing the Logo and Brand Name
 export const Header = () => {
     return (
         <nav className="fixed top-0 z-50 w-full border-b bg-blue-900 border-blue-700">

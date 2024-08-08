@@ -5,6 +5,7 @@ import { getTasks } from "../../utils/api";
 import { TaskForm } from "./TaskForm";
 import { useLocation } from "react-router-dom";
 
+//Layout present for each page visited, consisting of Header, SideBar and children/ Form always
 export const Layout = ({ children }) => {
     const [tasks, setTasks] = useState([]);
     const [formVisible, setFormVisible] = useState(false);
@@ -14,6 +15,7 @@ export const Layout = ({ children }) => {
         setFormVisible(prevState => !prevState);
     };
 
+    //Save tasks
     const saveTaskHandler = async (task) => {
         try {
             const response = await fetch('http://localhost:3001/tasks', {
@@ -35,6 +37,8 @@ export const Layout = ({ children }) => {
         }
     };
 
+
+    //To fetch already existing tasks when visited
     useEffect(() => {
         const loadTasks = async () => {
             try {
