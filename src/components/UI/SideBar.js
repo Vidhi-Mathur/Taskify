@@ -15,7 +15,7 @@ export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
     const [isSearchActive, setIsSearchActive] = useState(false)
     const [query, setQuery] = useState('')
     const [filteredTasks, setFilteredTasks] = useState(tasks)
-    const [expandedTasks, setExpandedTasks] = useState({})
+    const [expandedTask, setExpandedTask] = useState(null)
 
     //Update the filtered tasks whenever tasks change
     useEffect(() => {
@@ -40,10 +40,7 @@ export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
 
     //Expand task, based on id
     const toggleTaskExpansion = (taskId) => {
-        setExpandedTasks(prev => ({
-            ...prev,
-            [taskId]: !prev[taskId]
-        }))
+        setExpandedTask(prevId => prevId === taskId ? null : taskId)
     }
 
     useEffect(() => {
@@ -112,9 +109,9 @@ export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
                                         <Link to={`/${task.id}`} className="flex-grow">
                                             <span className={`ms-3 ${task.completed ? 'text-gray-500 line-through' : 'text-gray-300'}`}>{task.title}</span>
                                         </Link>
-                                        {expandedTasks[task.id] ? <ExpandLessIcon color='info' /> : <ExpandMoreIcon color='info' />}
+                                        {expandedTask === task.id ? <ExpandLessIcon color='info' /> : <ExpandMoreIcon color='info' />}
                                     </div>
-                                    {expandedTasks[task.id] && (
+                                    {expandedTask === task.id && (
                                         <div className="p-2 bg-gray-700">
                                             <p className="text-gray-400 text-sm mb-1">{task.description}</p>
                                             <p className="text-gray-500 text-xs">Last updated: {formattedDate(task.updatedAt)}</p>
