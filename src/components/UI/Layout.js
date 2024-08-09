@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Header } from "../UI/Header";
 import { SideBar } from "../UI/SideBar";
-import { getTasks } from "../../utils/api";
 import { TaskForm } from "./TaskForm";
 import { useLocation } from "react-router-dom";
 import { ErrorDialog } from "./ErrorDialog";
+import { TaskContext } from "../../store/Task-Context";
 
 //Layout present for each page visited, consisting of Header, SideBar and children/ Form always
 export const Layout = ({ children }) => {
-    const [tasks, setTasks] = useState([]);
+    const { tasks, fetchTasks } = useContext(TaskContext)
     const [formVisible, setFormVisible] = useState(false);
     const location = useLocation()
     const [error, setError] = useState(null)
@@ -32,8 +32,8 @@ export const Layout = ({ children }) => {
                 setError('Failed to save task');
                 return
             }
-            const savedTask = await response.json();
-            setTasks(prevTasks => [...prevTasks, savedTask]);
+            //Fetch after saving
+            await fetchTasks();
             setFormVisible(false);
         } 
         catch(err){
@@ -41,20 +41,6 @@ export const Layout = ({ children }) => {
             return
         }
     };
-
-    //To fetch already existing tasks when visited
-    useEffect(() => {
-        const loadTasks = async () => {
-            try{
-                const fetchTasks = await getTasks();
-                setTasks(fetchTasks);
-            } 
-			catch(err) {
-                setError(`Error loadin task: ${err.message}`);
-            }
-        };
-        loadTasks();
-    }, []);
 
     useEffect(() => {
         //Hide the form when the location changes
@@ -66,16 +52,12 @@ export const Layout = ({ children }) => {
         setError(null)
     }
 
-    //If error, display the dialog box
-     if(error){
-        return <ErrorDialog error={error} onClose={closeErrorDialog}/>
-    }
-
     return (
         <div className="flex flex-col h-screen bg-gray-400">
             <Header />
             <div className="flex flex-grow overflow-hidden">
                 <SideBar toggleFormVisibility={toggleFormVisibility} tasks={tasks}/>
+                {error && <ErrorDialog error={error} onClose={closeErrorDialog}/>}
                 <main className="flex-grow p-8">
                 {formVisible? (
                     <div className="max-w-3xl mx-auto mt-28">
