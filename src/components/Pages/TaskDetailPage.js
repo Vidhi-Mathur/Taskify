@@ -1,13 +1,15 @@
 import { useParams } from "react-router-dom"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { CalendarDays, ClipboardList } from 'lucide-react'
 import { TaskForm } from '../UI/TaskForm'
 import { ErrorDialog } from "../UI/ErrorDialog"
+import { TaskContext } from "../../store/Task-Context"
 
 export const TaskDetailPage = () => {
     const { taskId } = useParams()
     const [taskDetail, setTaskDetail] = useState(null)
     const [isEditing, setIsEditing] = useState(false)
+    const { updateTask } = useContext(TaskContext)
     const [error, setError] = useState(null)
 
     //Fetch task based on it
@@ -32,8 +34,8 @@ export const TaskDetailPage = () => {
 
     //To update the completion status of task in the backend
     const toggleCompletion = async () => {
-            const newCompletionStatus = !taskDetail.completed
-            updateTaskHandler({...taskDetail, completed: newCompletionStatus})
+        const newCompletionStatus = !taskDetail.completed
+        updateTaskHandler({...taskDetail, completed: newCompletionStatus})
     }
 
     //To enable editing mode
@@ -67,6 +69,7 @@ export const TaskDetailPage = () => {
             }
             const result = await response.json();
             setTaskDetail(result);
+            updateTask(result);
             setIsEditing(false);
         } 
         catch(err) {
