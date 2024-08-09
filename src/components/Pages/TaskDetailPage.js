@@ -6,7 +6,6 @@ import { TaskForm } from '../UI/TaskForm'
 export const TaskDetailPage = () => {
     const { taskId } = useParams()
     const [taskDetail, setTaskDetail] = useState(null)
-    const [isCompleted, setIsCompleted] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
 
     //Fetch task based on it
@@ -19,7 +18,6 @@ export const TaskDetailPage = () => {
                 }
                 const result = await response.json()
                 setTaskDetail(result)
-                setIsCompleted(result.completed)
             } 
             catch(error) {
                 console.error('Error fetching task:', error)
@@ -30,25 +28,8 @@ export const TaskDetailPage = () => {
 
     //To update the completion status of task in the backend
     const toggleCompletion = async () => {
-        try{
-            const newCompletionStatus = !isCompleted
-            const response = await fetch(`http://localhost:3001/tasks/${taskId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ completed: newCompletionStatus })
-            })
-            if(!response.ok){
-                throw new Error('Failed to update task completion status')
-            }
-            const updatedTask = await response.json()
-            setTaskDetail(updatedTask)
-            setIsCompleted(newCompletionStatus) 
-        } 
-        catch(error) {
-            console.error('Error updating task completion status:', error)
-        }
+            const newCompletionStatus = !taskDetail.completed
+            updateTaskHandler({...taskDetail, completed: newCompletionStatus})
     }
 
     //To enable editing mode
@@ -62,7 +43,7 @@ export const TaskDetailPage = () => {
     }
 
     //To modify tasks
-    const saveTaskHandler = async (updatedTask) => {
+    const updateTaskHandler = async (updatedTask) => {
         try{
             const response = await fetch(`http://localhost:3001/tasks/${taskId}`, {
                 method: 'PUT',
@@ -76,7 +57,6 @@ export const TaskDetailPage = () => {
             }
             const result = await response.json();
             setTaskDetail(result);
-            setIsCompleted(result.completed);
             setIsEditing(false);
         } 
         catch(error){
@@ -96,7 +76,7 @@ export const TaskDetailPage = () => {
     if(isEditing){
         return (
             <div className="max-w-3xl mx-auto mt-28">
-                <TaskForm onSaveTask={saveTaskHandler} onCancel={cancelHandler} initialData={taskDetail}/>
+                <TaskForm onSaveTask={updateTaskHandler} onCancel={cancelHandler} initialData={taskDetail}/>
             </div>
         )
     }
@@ -120,7 +100,7 @@ export const TaskDetailPage = () => {
                     <p className="text-gray-400 ml-8">{new Date(taskDetail.dueDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
                 <button onClick={toggleCompletion} className='px-4 py-2 text-sm md:text-base rounded-md text-gray-100 bg-blue-700 hover:bg-blue-600 hover:text-white mr-3'>
-                    Mark as {isCompleted ? "to be Done" : "Complete"}
+                    Mark as {taskDetail.completed ? "to be Done" : "Complete"}
                 </button>
                 <button onClick={editHandler} className='px-4 py-2 text-sm md:text-base rounded-md text-gray-100 bg-blue-700 hover:bg-blue-600 hover:text-white'>
                     Update
