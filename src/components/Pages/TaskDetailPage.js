@@ -2,11 +2,13 @@ import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { CalendarDays, ClipboardList } from 'lucide-react'
 import { TaskForm } from '../UI/TaskForm'
+import { ErrorDialog } from "../UI/ErrorDialog"
 
 export const TaskDetailPage = () => {
     const { taskId } = useParams()
     const [taskDetail, setTaskDetail] = useState(null)
     const [isEditing, setIsEditing] = useState(false)
+    const [error, setError] = useState(null)
 
     //Fetch task based on it
     useEffect(() => {
@@ -14,13 +16,15 @@ export const TaskDetailPage = () => {
             try{
                 const response = await fetch(`http://localhost:3001/tasks/${taskId}`)
                 if(!response.ok){
-                    throw new Error('Failed to fetch task')
+                    setError('Failed to fetch task')
+                    return
                 }
                 const result = await response.json()
                 setTaskDetail(result)
             } 
-            catch(error) {
-                console.error('Error fetching task:', error)
+            catch(err) {
+                setError(`Error fetching task: ${err.message}`);
+                return
             }
         }
         fetchTask()
@@ -42,6 +46,11 @@ export const TaskDetailPage = () => {
         setIsEditing(false)
     }
 
+    //To close the error dialog box
+    const closeErrorDialog = () => {
+        setError(null)
+    }
+
     //To modify tasks
     const updateTaskHandler = async (updatedTask) => {
         try{
@@ -53,23 +62,22 @@ export const TaskDetailPage = () => {
                 body: JSON.stringify(updatedTask)
             });
             if(!response.ok){
-                throw new Error('Failed to update task');
+                setError('Failed to update task');
+                return
             }
             const result = await response.json();
             setTaskDetail(result);
             setIsEditing(false);
         } 
-        catch(error){
-            console.error('Error updating task:', error);
+        catch(err) {
+            setError(`Error updating task: ${err.message}`);
+            return
         }
     }
-
-    if(!taskDetail){
-        return (
-            <div className="flex justify-center items-center h-full text-gray-300">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-            </div>
-        )
+    
+    //If error, display the dialog box
+    if(error){
+        return <ErrorDialog error={error} onClose={closeErrorDialog}/>
     }
 
     //If in editing mode, render the form along with initial data
@@ -83,29 +91,33 @@ export const TaskDetailPage = () => {
 
     return (
         <div className="bg-gray-900 text-gray-300 p-8 rounded-lg shadow-lg max-w-2xl mx-auto mt-28 border border-gray-700">
-            <h1 className="text-4xl font-bold mb-6 text-blue-400 border-b border-gray-700 pb-4">{taskDetail.title}</h1>
-            <div className="space-y-6">
-                <div className="bg-gray-800 p-6 rounded-md shadow-inner">
-                    <div className="flex items-center mb-3">
-                        <ClipboardList className="text-blue-400 mr-2" size={24} />
-                        <h2 className="text-2xl font-semibold text-blue-300">Description</h2>
+            {taskDetail && (
+                <>
+                    <h1 className="text-4xl font-bold mb-6 text-blue-400 border-b border-gray-700 pb-4">{taskDetail.title}</h1>
+                    <div className="space-y-6">
+                        <div className="bg-gray-800 p-6 rounded-md shadow-inner">
+                            <div className="flex items-center mb-3">
+                                <ClipboardList className="text-blue-400 mr-2" size={24} />
+                                <h2 className="text-2xl font-semibold text-blue-300">Description</h2>
+                            </div>
+                            <p className="text-gray-400 ml-8">{taskDetail.description}</p>
+                        </div>
+                        <div className="bg-gray-800 p-6 rounded-md shadow-inner">
+                            <div className="flex items-center mb-3">
+                                <CalendarDays className="text-blue-400 mr-2" size={24} />
+                                <h2 className="text-2xl font-semibold text-blue-300">Due Date</h2>
+                            </div>
+                            <p className="text-gray-400 ml-8">{new Date(taskDetail.dueDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        </div>
+                        <button onClick={toggleCompletion} className='px-4 py-2 text-sm md:text-base rounded-md text-gray-100 bg-blue-700 hover:bg-blue-600 hover:text-white mr-3'>
+                            Mark as {taskDetail.completed ? "to be Done" : "Complete"}
+                        </button>
+                        <button onClick={editHandler} className='px-4 py-2 text-sm md:text-base rounded-md text-gray-100 bg-blue-700 hover:bg-blue-600 hover:text-white'>
+                            Update
+                        </button>
                     </div>
-                    <p className="text-gray-400 ml-8">{taskDetail.description}</p>
-                </div>
-                <div className="bg-gray-800 p-6 rounded-md shadow-inner">
-                    <div className="flex items-center mb-3">
-                        <CalendarDays className="text-blue-400 mr-2" size={24} />
-                        <h2 className="text-2xl font-semibold text-blue-300">Due Date</h2>
-                    </div>
-                    <p className="text-gray-400 ml-8">{new Date(taskDetail.dueDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                </div>
-                <button onClick={toggleCompletion} className='px-4 py-2 text-sm md:text-base rounded-md text-gray-100 bg-blue-700 hover:bg-blue-600 hover:text-white mr-3'>
-                    Mark as {taskDetail.completed ? "to be Done" : "Complete"}
-                </button>
-                <button onClick={editHandler} className='px-4 py-2 text-sm md:text-base rounded-md text-gray-100 bg-blue-700 hover:bg-blue-600 hover:text-white'>
-                    Update
-                </button>
-            </div>
+                </>
+            )}
         </div>
     )
 }

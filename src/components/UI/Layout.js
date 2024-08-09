@@ -4,20 +4,23 @@ import { SideBar } from "../UI/SideBar";
 import { getTasks } from "../../utils/api";
 import { TaskForm } from "./TaskForm";
 import { useLocation } from "react-router-dom";
+import { ErrorDialog } from "./ErrorDialog";
 
 //Layout present for each page visited, consisting of Header, SideBar and children/ Form always
 export const Layout = ({ children }) => {
     const [tasks, setTasks] = useState([]);
     const [formVisible, setFormVisible] = useState(false);
-    const location = useLocation();
+    const location = useLocation()
+    const [error, setError] = useState(null)
 
+    //To toggle form visibility
     const toggleFormVisibility = () => {
         setFormVisible(prevState => !prevState);
     };
 
     //Save tasks
     const saveTaskHandler = async (task) => {
-        try {
+        try{
             const response = await fetch('http://localhost:3001/tasks', {
                 method: 'POST',
                 headers: {
@@ -26,27 +29,28 @@ export const Layout = ({ children }) => {
                 body: JSON.stringify(task)
             });
             if (!response.ok) {
-                throw new Error('Failed to save task');
+                setError('Failed to save task');
+                return
             }
             const savedTask = await response.json();
             setTasks(prevTasks => [...prevTasks, savedTask]);
             setFormVisible(false);
         } 
-        catch (error) {
-            console.error('Error saving task:', error);
+        catch(err){
+            setError(`Error saving task: ${err.message}`);
+            return
         }
     };
-
 
     //To fetch already existing tasks when visited
     useEffect(() => {
         const loadTasks = async () => {
-            try {
+            try{
                 const fetchTasks = await getTasks();
                 setTasks(fetchTasks);
             } 
-			catch (error) {
-                console.error('Error loading tasks:', error);
+			catch(err) {
+                setError(`Error loadin task: ${err.message}`);
             }
         };
         loadTasks();
@@ -57,21 +61,31 @@ export const Layout = ({ children }) => {
         setFormVisible(false);
     }, [location])
 
-  return (
-    <div className="flex flex-col h-screen bg-gray-400">
-        <Header />
-        <div className="flex flex-grow overflow-hidden">
-            <SideBar toggleFormVisibility={toggleFormVisibility} tasks={tasks}/>
-            <main className="flex-grow p-8">
-            {formVisible? (
-                <div className="max-w-3xl mx-auto mt-28">
-                    <TaskForm onSaveTask={saveTaskHandler} onCancel={() => setFormVisible(false)} />
-                </div>
-            ): (
-                children
-            )}
-            </main>
+    //To close the error dialog box
+    const closeErrorDialog = () => {
+        setError(null)
+    }
+
+    //If error, display the dialog box
+     if(error){
+        return <ErrorDialog error={error} onClose={closeErrorDialog}/>
+    }
+
+    return (
+        <div className="flex flex-col h-screen bg-gray-400">
+            <Header />
+            <div className="flex flex-grow overflow-hidden">
+                <SideBar toggleFormVisibility={toggleFormVisibility} tasks={tasks}/>
+                <main className="flex-grow p-8">
+                {formVisible? (
+                    <div className="max-w-3xl mx-auto mt-28">
+                        <TaskForm onSaveTask={saveTaskHandler} onCancel={() => setFormVisible(false)} />
+                    </div>
+                ): (
+                    children
+                )}
+                </main>
+            </div>
         </div>
-    </div>
-  );
+    );
 };
