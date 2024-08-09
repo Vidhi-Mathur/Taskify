@@ -17,6 +17,11 @@ export const SideBar = ({ toggleFormVisibility, tasks = [] }) => {
     const [filteredTasks, setFilteredTasks] = useState(tasks)
     const [expandedTasks, setExpandedTasks] = useState({})
 
+    //Update the filtered tasks whenever tasks change
+    useEffect(() => {
+        setFilteredTasks(tasks)
+    }, [tasks])
+
     //To handle sidebar visiblity, which is initially hidden
     const toggleSideBarVisibility = () => {
         setIsVisible(prevState => !prevState)
