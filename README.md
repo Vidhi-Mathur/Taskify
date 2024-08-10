@@ -59,7 +59,7 @@ Once the server and frontend are running:
 - `/public`: Contains the HTML template and static assets.
 - `/src`
     - `/components`: Contains reusable UI components like `Header`, `SideBar`, `TaskForm`, and `ErrorDialog`.
-    - `/pages`: Contains the main pages like `HomePage`, `TaskDetailPage`, and `Layout`.
+    - `/pages`: Contains the main pages like `HomePage`, and `TaskDetailPage`.
     - `/store`: Context API setup to manage global state.
     - `/assets`: Contains images and other static resources.
     - `/db.json`: The JSON file used by json-server to mock the backend.
