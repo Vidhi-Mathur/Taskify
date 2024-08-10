@@ -62,7 +62,7 @@ Once the server and frontend are running:
     - `/pages`: Contains the main pages like `HomePage`, and `TaskDetailPage`.
     - `/store`: Context API setup to manage global state.
     - `/assets`: Contains images and other static resources.
-    - `/db.json`: The JSON file used by json-server to mock the backend.
+
 ## Tech Stack
 
 - [React](https://reactjs.org/) (18.3.1)
