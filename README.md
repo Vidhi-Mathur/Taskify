@@ -15,13 +15,6 @@ Taskify is a sleek and intuitive to-do list application designed to streamline y
 
 ## Installation
 
-### Prerequisites
-
-Ensure you have the following installed:
-
-- [Node.js](https://nodejs.org/) (v14.x or later)
-- [npm](https://www.npmjs.com/) (v6.x or later)
-
 ### Backend Setup
 
 1. Clone the repository:
