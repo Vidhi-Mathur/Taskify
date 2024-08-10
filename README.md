@@ -1,70 +1,76 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Taskify
 
-## Available Scripts
+Taskify is a sleek and intuitive to-do list application designed to streamline your task management. Built with React for the frontend and powered by a JSON server for the backend, Taskify is perfect for developers looking to quickly set up and manage their tasks.
 
-In the project directory, you can run:
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Task Management**: Create, update, and delete tasks easily.
+- **Task Status**: Mark tasks as completed or to be done.
+- **Task Search**: Quickly search and filter tasks.
+- **Task Detail Page**: View detailed information about each task.
+- **Sidebar Navigation**: A collapsible sidebar to preview tasks
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
+## Installation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Prerequisites
 
-### `npm run build`
+Ensure you have the following installed:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- [Node.js](https://nodejs.org/) (v14.x or later)
+- [npm](https://www.npmjs.com/) (v6.x or later)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Backend Setup
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Vidhi-Mathur/Taskify.git
+    ```
+2. Navigate to the project directory: 
+    ```bash
+   cd taskify
+    ```
+3. Start the backend server using json-server:
+    ```bash
+   json-server --watch db.json --port 3001
+    ```
+### Frontend Setup
 
-### `npm run eject`
+1. Install the frontend dependencies:
+    ```bash
+   npm install
+    ```
+2. Start the frontend application: 
+    ```bash
+   npm start
+    ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+    
+## Usage
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Once the server and frontend are running:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Visit http://localhost:3000 to view the Taskify application.
+- Use the sidebar to navigate through tasks, search, and add new tasks.
+- Click on a task title to view detailed information and make updates.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Project Struture
 
-## Learn More
+- `/public`: Contains the HTML template and static assets.
+- `/src`
+    - `/components`: Contains reusable UI components like `Header`, `SideBar`, `TaskForm`, and `ErrorDialog`.
+    - `/pages`: Contains the main pages like `HomePage`, `TaskDetailPage`, and `Layout`.
+    - `/store`: Context API setup to manage global state.
+    - `/assets`: Contains images and other static resources.
+    - `/db.json`: The JSON file used by json-server to mock the backend.
+## Tech Stack
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- [React](https://reactjs.org/) (18.3.1)
+- [React Router](https://reactrouter.com/) (6.25.1)
+- [Material-UI](https://mui.com/) (5.16.6)
+- [Tailwind CSS](https://tailwindcss.com/) (3.4.7)
+- [Lucide React](https://lucide.dev/) (0.424.0)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
