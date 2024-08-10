@@ -1,6 +1,10 @@
 import { createContext, useState, useEffect } from "react"
 
-export const TaskContext = createContext()
+export const TaskContext = createContext({
+    tasks: [],
+    updateTask: () => {},
+    fetchTasks: () => {}
+})
 
 export const TaskCtxProvider = ({ children }) => {
     const [tasks, setTasks] = useState([])
