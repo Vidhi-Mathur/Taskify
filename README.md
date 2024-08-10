@@ -6,7 +6,7 @@ Taskify is a sleek and intuitive to-do list application designed to streamline y
 
 ## Features
 
-- **Task Management**: Create, update, and delete tasks easily.
+- **Task Management**: Create, and update tasks easily.
 - **Task Status**: Mark tasks as completed or to be done.
 - **Task Search**: Quickly search and filter tasks.
 - **Task Detail Page**: View detailed information about each task.
