@@ -32,7 +32,13 @@ Ensure you have the following installed:
     ```bash
    cd taskify
     ```
-3. Start the backend server using json-server:
+3. Create a db.json file in the root of the project with the following content:
+    ```bash
+   {
+     "tasks": []
+   }
+    ```
+4. Start the backend server using json-server:
     ```bash
    json-server --watch db.json --port 3001
     ```
@@ -46,7 +52,6 @@ Ensure you have the following installed:
     ```bash
    npm start
     ```
-
     
 ## Usage
 
